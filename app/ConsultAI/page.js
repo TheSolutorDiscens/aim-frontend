@@ -66,17 +66,19 @@ export default function ConsultAI() {
             let Report = await PostData("http://localhost:8000/API", parsedData);
 
             if (Report && Report.Result && Report.Result.Data !== undefined) {
-                localStorage.setItem("Result", Report.Result.Data);
-                localStorage.setItem("Name", Input1);
-                localStorage.setItem("Gender", Input3);
-                localStorage.setItem("Pregnancies", Input4);
-                localStorage.setItem("Glucose", Input5);
-                localStorage.setItem("BloodPressure", Input6);
-                localStorage.setItem("SkinThickness", Input7);
-                localStorage.setItem("Insulin", Input8);
-                localStorage.setItem("BMI", Input9);
-                localStorage.setItem("DiabetesPedigreeFunction", Input0);
-                localStorage.setItem("Age", Input2);
+                if (typeof window !== "undefined") {
+                    localStorage.setItem("Result", Report.Result.Data);
+                    localStorage.setItem("Name", Input1);
+                    localStorage.setItem("Gender", Input3);
+                    localStorage.setItem("Pregnancies", Input4);
+                    localStorage.setItem("Glucose", Input5);
+                    localStorage.setItem("BloodPressure", Input6);
+                    localStorage.setItem("SkinThickness", Input7);
+                    localStorage.setItem("Insulin", Input8);
+                    localStorage.setItem("BMI", Input9);
+                    localStorage.setItem("DiabetesPedigreeFunction", Input0);
+                    localStorage.setItem("Age", Input2);
+                }
 
                 setMkButtonDisabled(false);
                 setButtonDisabled(false);
