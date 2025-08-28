@@ -63,7 +63,7 @@ export default function ConsultAI() {
 
             console.log("Sending data to Flask:", parsedData);
 
-            let Report = await PostData("https://aim-backend-31i9.onrender.com", parsedData);
+            let Report = await PostData("https://aim-backend-31i9.onrender.com/API/", parsedData);
 
             if (Report && Report.Result && Report.Result.Data !== undefined) {
                 if (typeof window !== "undefined") {
