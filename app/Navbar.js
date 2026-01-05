@@ -25,7 +25,8 @@ export default function Navbar() {
                             </path>
                         </svg>
                     </Link>
-                    <Link href="/About" className="dark:text-gray-200">About</Link>
+                    <Link href="/about" className="dark:text-gray-200">About</Link>
+                    <Link href="/yourReports" className="dark:text-gray-200">Your Reports</Link>
                     <Link href="#Diabetes" className="dark:text-gray-200">Diabetes</Link>
                 </ul>
 

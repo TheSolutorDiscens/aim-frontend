@@ -295,7 +295,6 @@ html {
 }
 
 .UNDERLINE {
-    color: black;
     text-decoration: none;
 }
 
@@ -303,18 +302,6 @@ html {
     display: flex;
     flex-direction: column;
     margin-top: 1rem;
-}
-
-.LINK a h3 {
-    color: rgb(157, 157, 157);
-}
-
-.LINK a {
-    color: rgb(157, 157, 157);
-}
-
-.LINK p {
-    color: rgb(118, 118, 118);
 }
 
 .H1 {
@@ -352,8 +339,9 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     cursor: pointer;
 }
 
@@ -392,12 +380,12 @@ html {
     justify-content: center;
 }
 
-.REPORT h1 {
+.REPORT h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    font-size: 2rem;
     margin-bottom: 3rem;
     font-family: sans-serif;
 }
@@ -421,7 +409,7 @@ html {
     align-items: center;
     justify-content: center;
     width: 50rem;
-    height: 17rem;
+    height: 20rem;
     background: rgb(240 248 255);
     border: 2px solid rgb(160, 160, 160);
     margin-bottom: 2rem;
@@ -486,7 +474,6 @@ html {
     height: 40px;
     position: absolute;
     left: 75%;
-    top: 50%;
     cursor: pointer;
     background-color: transparent;
 }
@@ -558,4 +545,36 @@ html {
 
 .TRY_AGAIN:hover {
     background-color: rgb(244, 70, 70);
+}
+
+
+
+
+.CONFIDENCE_BOX {
+    margin-top: 10px;
+}
+
+.BAR {
+    width: 100%;
+    height: 16px;
+    margin-bottom: 0.25rem;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.BAR_FILL {
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.CONF_TEXT {
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.RISK_BOX {
+    margin-top: 12px;
+    font-size: 14px;
+    margin-bottom: 0.25rem;
 }

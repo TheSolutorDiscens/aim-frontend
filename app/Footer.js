@@ -16,8 +16,8 @@ export default function Footer() {
                     <div className="WRAP">
                         <h2>Product</h2>
                         <div className="LINK">
-                            <Link href="/ConsultAI" className="UNDERLINE">
-                                <h3>Diabetes Predicter</h3>
+                            <Link href="/consultAI" className="UNDERLINE">
+                                <h3 className="text-slate-600">AIM Diabetes Predicter</h3>
                             </Link>
                         </div>
                     </div>
@@ -25,8 +25,8 @@ export default function Footer() {
                     <div className="WRAP">
                         <h2>Resources</h2>
                         <div className="LINK">
-                            <Link href="/More" className="UNDERLINE">More</Link>
-                            <Link href="/YourReports" className="UNDERLINE">Your AIM-Reports!!!</Link>
+                            <Link href="/more" className="text-slate-600 UNDERLINE">More</Link>
+                            <Link href="/yourReports" className="text-slate-600 UNDERLINE">History Of Your Reports!!!</Link>
                         </div>
                     </div>
 
@@ -35,7 +35,7 @@ export default function Footer() {
                         <div className="LINK">
                             <p>OWNED BY COMPUTES!!!</p>
 
-                            <Link href="/About" className="UNDERLINE">About</Link>
+                            <Link href="/about" className="text-slate-600 UNDERLINE">About</Link>
                         </div>
                     </div>
                 </div>

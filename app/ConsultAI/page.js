@@ -1,140 +1,180 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ConsultAI() {
-    const [ButtonDisabled, setButtonDisabled] = useState(false);
-    const [MkButtonDisabled, setMkButtonDisabled] = useState(false);
-    const [Input1, setInput1] = useState("");
-    const [Input2, setInput2] = useState("");
-    const [Input3, setInput3] = useState("");
-    const [Input4, setInput4] = useState("");
-    const [Input5, setInput5] = useState("");
-    const [Input6, setInput6] = useState("");
-    const [Input7, setInput7] = useState("");
-    const [Input8, setInput8] = useState("");
-    const [Input9, setInput9] = useState("");
-    const [Input0, setInput0] = useState("");
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        age: "",
+        gender: "",
+        pregnancies: "",
+        glucose: "",
+        bloodPressure: "",
+        skinThickness: "",
+        insulin: "",
+        bmi: "",
+        dpf: "",
+    });
 
-    const Router = useRouter();
+    // ------------------ HANDLERS ------------------
 
-    async function PostData(url = "", data = {}) {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
         });
-        return response.json();
-    }
+    };
+
+    // ------------------ API CALL ------------------
 
     const GenerateReport = async () => {
-        const inputs = [Input1, Input2, Input3, Input4, Input5, Input6, Input7, Input8, Input9, Input0];
-        const hasEmptyInput = inputs.some(input => input.trim().length === 0);
+        const values = Object.values(formData);
 
-        if (hasEmptyInput) {
-            alert("Please fill all the required fields!!!");
+        if (values.some((v) => v.trim() === "")) {
+            alert("Please fill all the required fields!");
             return;
         }
 
-        setButtonDisabled(true);
-        setMkButtonDisabled(true);
+        setLoading(true);
 
-        let parsedData = {};
         try {
-            parsedData = {
-                "Age": parseInt(Input2),
-                "Pregnancies": parseInt(Input4),
-                "Glucose": parseInt(Input5),
-                "BloodPressure": parseInt(Input6),
-                "SkinThickness": parseInt(Input7),
-                "Insulin": parseInt(Input8),
-                "BMI": parseInt(Input9),
-                "DiabetesPedigreeFunction": parseFloat(Input0),
+            const payload = {
+                Age: Number(formData.age),
+                Pregnancies: Number(formData.pregnancies),
+                Glucose: Number(formData.glucose),
+                BloodPressure: Number(formData.bloodPressure),
+                SkinThickness: Number(formData.skinThickness),
+                Insulin: Number(formData.insulin),
+                BMI: parseFloat(formData.bmi),
+                DiabetesPedigreeFunction: parseFloat(formData.dpf),
             };
 
-            for (const key in parsedData) {
-                if (isNaN(parsedData[key])) {
-                    throw new Error(`Invalid input for ${key}. Please enter a number.`);
+            Object.entries(payload).forEach(([key, value]) => {
+                if (isNaN(value)) {
+                    throw new Error(`Invalid value for ${key}`);
                 }
-            }
+            });
 
-            console.log("Sending data to Flask:", parsedData);
-
-            let Report = await PostData(`${process.env.NEXT_PUBLIC_API_URL}`, parsedData);
-
-            if (Report && Report.Result && Report.Result.Data !== undefined) {
-                if (typeof window !== "undefined") {
-                    localStorage.setItem("Result", Report.Result.Data);
-                    localStorage.setItem("Name", Input1);
-                    localStorage.setItem("Gender", Input3);
-                    localStorage.setItem("Pregnancies", Input4);
-                    localStorage.setItem("Glucose", Input5);
-                    localStorage.setItem("BloodPressure", Input6);
-                    localStorage.setItem("SkinThickness", Input7);
-                    localStorage.setItem("Insulin", Input8);
-                    localStorage.setItem("BMI", Input9);
-                    localStorage.setItem("DiabetesPedigreeFunction", Input0);
-                    localStorage.setItem("Age", Input2);
+            const response = await fetch(
+                "https://aim-backend-f6t9.onrender.com/predict",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
                 }
+            );
 
-                setMkButtonDisabled(false);
-                setButtonDisabled(false);
-                Router.push("/YourReport");
+            if (!response.ok) {
+                throw new Error("Failed to generate prediction");
             }
 
-            else {
-                alert("Error: Invalid response from API or missing result data.");
-                console.error("API Response:", Report);
-            }
+            const result = await response.json();
 
-        }
-        catch (error) {
-            alert(`An error occurred: ${error.message}`);
-            console.error("Error in GenerateReport:", error);
-        }
+            localStorage.setItem("Name", formData.name);
+            localStorage.setItem("Gender", formData.gender);
+            localStorage.setItem("Age", formData.age);
+            localStorage.setItem("Pregnancies", formData.pregnancies);
+            localStorage.setItem("Glucose", formData.glucose);
+            localStorage.setItem("BloodPressure", formData.bloodPressure);
+            localStorage.setItem("SkinThickness", formData.skinThickness);
+            localStorage.setItem("Insulin", formData.insulin);
+            localStorage.setItem("BMI", formData.bmi);
+            localStorage.setItem("DiabetesPedigreeFunction", formData.dpf);
+            localStorage.setItem("Result", result.prediction);
+            localStorage.setItem("Confidence", result.confidence);
+            localStorage.setItem("PositiveProb", result.probabilities.positive);
+            localStorage.setItem("NegativeProb", result.probabilities.negative);
 
-        finally {
-            setMkButtonDisabled(false);
-            setButtonDisabled(false);
+
+            router.push("/yourReport");
+        } catch (error) {
+            alert(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
+    // ------------------ UI ------------------
+
     return (
-        <>
-            <main className="MAIN_PAGE_2" id="CONSULTCRED">
-                <h1 className="H1">FILL YOUR CREDINTIALS!!!</h1>
+        <main className="MAIN_PAGE_2" id="CONSULTCRED">
+            <h1 className="H1">Fill Your Health Stats</h1>
 
-                <div className="CRED">
-                    <input type="text" value={Input1} onChange={(event) => setInput1(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Name" />
-                    <input type="text" value={Input2} onChange={(event) => setInput2(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Age" />
-                    <input type="text" value={Input3} onChange={(event) => setInput3(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Gender" />
-                    <input type="text" value={Input4} onChange={(event) => setInput4(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Pregnancies.If Male, ENTER 0" />
-                    <input type="text" value={Input5} onChange={(event) => setInput5(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Glucose" />
-                    <input type="text" value={Input6} onChange={(event) => setInput6(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR BloodPressure" />
-                    <input type="text" value={Input7} onChange={(event) => setInput7(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR SkinThickness" />
-                    <input type="text" value={Input8} onChange={(event) => setInput8(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR Insulin" />
-                    <input type="text" value={Input9} onChange={(event) => setInput9(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR BMI" />
-                    <input type="text" value={Input0} onChange={(event) => setInput0(event.target.value)} name="TEXTCONTAINER" placeholder="ENTER YOUR DiabetesPedigreeFunction" />
-                </div>
+            <div className="CRED">
+                <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" />
 
-                <div className="MAIN_BTN">
-                    <button className={MkButtonDisabled ? `!cursor-not-allowed !bg-gray-500` : ``} disabled={MkButtonDisabled ? true : false} id="MAIN-B" onClick={GenerateReport}>
-                        {ButtonDisabled ? "Generating Your AIM-Report!!!" : "Generate Your AIM-Report!!!"}
-                    </button>
+                <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" />
 
-                    {
-                        ButtonDisabled
-                            ?
-                            <p className="text-center text-red-500 m-auto">Be Patient, It may take few seconds!!!</p>
-                            :
-                            <p className="hidden"></p>
+                <input name="gender" value={formData.gender} onChange={handleChange} placeholder="Gender" />
 
-                    }
-                </div>
-            </main>
-        </>
+                <input
+                    type="number"
+                    name="pregnancies"
+                    value={formData.pregnancies}
+                    onChange={handleChange}
+                    placeholder="Pregnancies (0 for male)"
+                />
+
+                <input type="number" name="glucose" value={formData.glucose} onChange={handleChange} placeholder="Glucose" />
+
+                <input
+                    type="number"
+                    name="bloodPressure"
+                    value={formData.bloodPressure}
+                    onChange={handleChange}
+                    placeholder="Blood Pressure"
+                />
+
+                <input
+                    type="number"
+                    name="skinThickness"
+                    value={formData.skinThickness}
+                    onChange={handleChange}
+                    placeholder="Skin Thickness"
+                />
+
+                <input type="number" name="insulin" value={formData.insulin} onChange={handleChange} placeholder="Insulin" />
+
+                <input
+                    type="number"
+                    step="0.1"
+                    name="bmi"
+                    value={formData.bmi}
+                    onChange={handleChange}
+                    placeholder="BMI"
+                />
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="dpf"
+                    value={formData.dpf}
+                    onChange={handleChange}
+                    placeholder="Diabetes Pedigree Function"
+                />
+            </div>
+
+            <div className="MAIN_BTN">
+                <button
+                    onClick={GenerateReport}
+                    disabled={loading}
+                    className={loading ? "cursor-not-allowed bg-gray-500" : ""}
+                >
+                    {loading ? "Generating Report..." : "Generate AIM Report"}
+                </button>
+
+                {loading && (
+                    <p className="text-center text-red-500 mt-3">
+                        Please wait, this may take a few seconds...
+                    </p>
+                )}
+            </div>
+        </main>
     );
 }
+
