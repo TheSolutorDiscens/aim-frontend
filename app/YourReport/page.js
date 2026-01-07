@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 export default function YourReport() {
     const [reportData, setReportData] = useState(null);
     const [resultText, setResultText] = useState("Loading...");
+    const [Risk, setRisk] = useState(null);
     const [copied, setCopied] = useState(false);
 
     // ------------------ LOAD DATA ------------------
@@ -37,6 +38,19 @@ export default function YourReport() {
         } else {
             setResultText("Result Not Available");
         }
+
+        if (data.Confidence >= "70") {
+            setRisk("HIGH");
+        }
+
+        else if (data.Confidence >= "40") {
+            setRisk("MEDIUM");
+        }
+
+        else {
+            setRisk("LOW");
+        }
+
     }, []);
 
     // ------------------ COPY ------------------
@@ -165,6 +179,7 @@ export default function YourReport() {
                     <div className="RISK_BOX">
                         <p className="text-base">Diabetic Risk: <strong>{reportData.PositiveProb}%</strong></p>
                         <p className="text-base">Non-Diabetic Probability: <strong>{reportData.NegativeProb}%</strong></p>
+                        <p style={{ fontSize: "1rem", lineHeight: "1.5rem", color: Risk >= "70" ? "red" : Risk >= "40" ? "orange" : "#ef4444" }}>Overall Diabetic Risk: <strong>{Risk}</strong></p>
                     </div>
 
                     <p className="PSWR">
