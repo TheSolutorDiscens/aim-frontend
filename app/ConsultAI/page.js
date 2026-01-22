@@ -41,7 +41,9 @@ export default function ConsultAI() {
 
         try {
             const payload = {
+                Name: String(formData.name),
                 Age: Number(formData.age),
+                Gender: String(formData.gender),
                 Pregnancies: Number(formData.pregnancies),
                 Glucose: Number(formData.glucose),
                 BloodPressure: Number(formData.bloodPressure),
@@ -51,14 +53,9 @@ export default function ConsultAI() {
                 DiabetesPedigreeFunction: parseFloat(formData.dpf),
             };
 
-            Object.entries(payload).forEach(([key, value]) => {
-                if (isNaN(value)) {
-                    throw new Error(`Invalid value for ${key}`);
-                }
-            });
 
             const response = await fetch(
-                "https://aim-backend-f6t9.onrender.com/predict",
+                "https://aim-backend-f6t9.onrender.com/api/v1/predict",
                 {
                     method: "POST",
                     headers: {
@@ -69,6 +66,7 @@ export default function ConsultAI() {
             );
 
             if (!response.ok) {
+                console.log(payload);
                 throw new Error("Failed to generate prediction");
             }
 

@@ -39,16 +39,16 @@ export default function YourReport() {
             setResultText("Result Not Available");
         }
 
-        if (data.Confidence >= "70") {
-            setRisk("HIGH");
+        if (data.NegativeProb >= "70") {
+            setRisk("LOW");
         }
 
-        else if (data.Confidence >= "40") {
+        else if (data.NegativeProb >= "40") {
             setRisk("MEDIUM");
         }
 
         else {
-            setRisk("LOW");
+            setRisk("HIGH");
         }
 
     }, []);
@@ -82,7 +82,7 @@ export default function YourReport() {
         try {
             await navigator.clipboard.writeText(text);
             setCopied(true);
-        } catch (err) {
+        } catch (error) {
             alert("Failed to copy report");
         }
     };
@@ -95,7 +95,7 @@ export default function YourReport() {
         );
     }
 
-    // ------------------ UI ------------------
+
 
     return (
         <main id="REPORT">
