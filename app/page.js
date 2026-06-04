@@ -24,7 +24,7 @@ export default function Home() {
         </div>
 
         <div className="BUTTON_INITIATE">
-          <Link href="/consultAI" className="UNDERLINE"><button>GET STARTED!!!</button></Link>
+          <Link href="/ConsultAI" className="UNDERLINE"><button>GET STARTED!!!</button></Link>
         </div>
       </section>
       <br />
